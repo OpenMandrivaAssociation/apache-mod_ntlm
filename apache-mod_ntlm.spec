@@ -6,7 +6,7 @@
 Summary:	Mod_ntlm is a DSO module for the apache web server
 Name:		apache-%{mod_name}
 Version:	0.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 Group:		System/Servers
 License:	BSD
 URL:		http://modntlm.jamiekerwick.co.uk/
@@ -23,8 +23,6 @@ Requires:	apache-conf >= 2.2.0
 Requires:	apache >= 2.2.0
 BuildRequires:	apache-devel >= 2.2.0
 BuildRequires:	file
-Provides:	apache2-mod_ntlm
-Obsoletes:	apache2-mod_ntlm
 Epoch:		2
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
