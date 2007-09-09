@@ -3,7 +3,7 @@
 %define mod_conf 97_%{mod_name}.conf
 %define mod_so %{mod_name}.so
 
-Summary:	Mod_ntlm is a DSO module for the apache web server
+Summary:	NTLM authentication module for apache
 Name:		apache-%{mod_name}
 Version:	0.2
 Release:	%mkrel 4
