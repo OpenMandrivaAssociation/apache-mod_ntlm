@@ -6,7 +6,7 @@
 Summary:	NTLM authentication module for apache
 Name:		apache-%{mod_name}
 Version:	0.2
-Release:	%mkrel 7
+Release:	%mkrel 8
 Group:		System/Servers
 License:	BSD
 URL:		http://modntlm.jamiekerwick.co.uk/
@@ -15,6 +15,7 @@ Source1:	%{mod_conf}.bz2
 Source2:	README.html.bz2
 Patch0:		ntlm2-apr1.diff
 Patch1:		ntlm2-gcc4.diff
+Patch2:		mod_ntlm-format_not_a_string_literal_and_no_format_arguments.diff
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 Requires(pre):	apache-conf >= 2.2.0
@@ -35,6 +36,7 @@ Unix platforms.
 %setup -q -c -n %{mod_name}
 %patch0 -p0
 %patch1 -p0
+%patch2 -p0
 
 # strip away annoying ^M
 find . -type f|xargs file|grep 'CRLF'|cut -d: -f1|xargs perl -p -i -e 's/\r//'
