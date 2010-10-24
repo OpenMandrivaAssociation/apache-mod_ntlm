@@ -6,7 +6,7 @@
 Summary:	NTLM authentication module for apache
 Name:		apache-%{mod_name}
 Version:	0.2
-Release:	%mkrel 10
+Release:	%mkrel 11
 Group:		System/Servers
 License:	BSD
 URL:		http://modntlm.jamiekerwick.co.uk/
