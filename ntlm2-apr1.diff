@@ -1,0 +1,11 @@
+--- mod_ntlm.c	2004-03-08 15:50:15.000000000 +0100
++++ mod_ntlm.c.oden	2005-12-16 09:58:40.000000000 +0100
+@@ -671,7 +671,7 @@
+         return NULL;
+     }
+ 
+-    apr_pool_sub_make(&sp,p,NULL);
++    apr_pool_create_ex(&sp,p,NULL,NULL);
+ 
+     while (!(ap_cfg_getline(l, MAX_STRING_LEN, f))) {
+         if ((l[0] == '#') || (!l[0]))

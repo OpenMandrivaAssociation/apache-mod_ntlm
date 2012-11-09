@@ -1,0 +1,350 @@
+diff -Naur smbval/rfcnb-io.inc.c smbval.oden/rfcnb-io.inc.c
+--- smbval/rfcnb-io.inc.c	2003-06-05 21:56:17.000000000 +0200
++++ smbval.oden/rfcnb-io.inc.c	2005-12-16 09:40:20.000000000 +0100
+@@ -30,11 +30,11 @@
+ #include <sys/signal.h>
+ #include <string.h>
+ 
+-static int RFCNB_Timeout = 0;   /* Timeout in seconds ... */
++int RFCNB_Timeout = 0;   /* Timeout in seconds ... */
+ 
+ /* Discard the rest of an incoming packet as we do not have space for
+  * it in the buffer we allocated or were passed ... */
+-static int 
++int 
+ RFCNB_Discard_Rest(struct RFCNB_Con *con, int len)
+ {
+     char temp[100];             /* Read into here */
+@@ -66,7 +66,7 @@
+ /* Send an RFCNB packet to the connection.  We just send each of the
+  * blocks linked together ...  If we can, try to send it as one iovec
+  * ...  */
+-static int 
++int 
+ RFCNB_Put_Pkt(struct RFCNB_Con *con, struct RFCNB_Pkt *pkt, int len)
+ {
+     int len_sent, tot_sent, this_len;
+@@ -143,7 +143,7 @@
+ /* Read an RFCNB packet off the connection.  We read the first 4
+  * bytes, that tells us the length, then read the rest. We should
+  * implement a timeout, but we don't just yet */
+-static int 
++int 
+ RFCNB_Get_Pkt(struct RFCNB_Con *con, struct RFCNB_Pkt *pkt, int len)
+ {
+     int read_len, pkt_len;
+diff -Naur smbval/rfcnb-priv.h smbval.oden/rfcnb-priv.h
+--- smbval/rfcnb-priv.h	2003-06-05 21:56:18.000000000 +0200
++++ smbval.oden/rfcnb-priv.h	2005-12-16 09:50:08.000000000 +0100
+@@ -113,8 +113,8 @@
+ /* Only declare this if not defined */
+ 
+ #ifndef RFCNB_ERRNO
+-static int RFCNB_errno;
+-static int RFCNB_saved_errno;   /* Save this from point of error */
++extern int RFCNB_errno;
++extern int RFCNB_saved_errno;   /* Save this from point of error */
+ #endif
+ 
+ #endif
+diff -Naur smbval/rfcnb-util.inc.c smbval.oden/rfcnb-util.inc.c
+--- smbval/rfcnb-util.inc.c	2003-06-05 21:56:19.000000000 +0200
++++ smbval.oden/rfcnb-util.inc.c	2005-12-16 09:42:23.000000000 +0100
+@@ -31,7 +31,7 @@
+ /* Convert name and pad to 16 chars as needed.  Name 1 is a C string
+  * with null termination, name 2 may not be.  If SysName is true, then
+  * put a <00> on end, else space> */
+-static void 
++void
+ RFCNB_CvtPad_Name(char *name1, char *name2)
+ {
+     char c, c1, c2;
+@@ -54,7 +54,7 @@
+ }
+ 
+ /* Get a packet of size n */
+-static struct RFCNB_Pkt *
++struct RFCNB_Pkt *
+ RFCNB_Alloc_Pkt(int n)
+ {
+     RFCNB_Pkt *pkt;
+@@ -81,7 +81,7 @@
+ }
+ 
+ /* Free up a packet */
+-static void 
++void 
+ RFCNB_Free_Pkt(struct RFCNB_Pkt *pkt)
+ {
+     struct RFCNB_Pkt *pkt_next;
+@@ -98,7 +98,7 @@
+ }
+ 
+ /* Resolve a name into an address */
+-static int 
++int 
+ RFCNB_Name_To_IP(char *host, struct in_addr *Dest_IP)
+ {
+     int addr;                   /* Assumes IP4, 32 bit network addresses */
+@@ -123,7 +123,7 @@
+ }
+ 
+ /* Disconnect the TCP connection to the server */
+-static int 
++int 
+ RFCNB_Close(int socket)
+ {
+     close(socket);
+@@ -133,7 +133,7 @@
+ 
+ /* Connect to the server specified in the IP address. Not sure how to
+  * handle socket options etc.  */
+-static int 
++int 
+ RFCNB_IP_Connect(struct in_addr Dest_IP, int port)
+ {
+     struct sockaddr_in Socket;
+@@ -163,7 +163,7 @@
+ }
+ 
+ /* handle the details of establishing the RFCNB session with remote end */
+-static int 
++int 
+ RFCNB_Session_Req(struct RFCNB_Con *con,
+                   char *Called_Name,
+                   char *Calling_Name,
+diff -Naur smbval/session.inc.c smbval.oden/session.inc.c
+--- smbval/session.inc.c	2004-02-19 16:21:48.000000000 +0100
++++ smbval.oden/session.inc.c	2005-12-16 09:44:21.000000000 +0100
+@@ -24,8 +24,8 @@
+ #include <malloc.h>
+ #include <string.h>
+ 
+-static int RFCNB_errno = 0;
+-static int RFCNB_saved_errno = 0;
++int RFCNB_errno = 0;
++int RFCNB_saved_errno = 0;
+ #define RFCNB_ERRNO
+ 
+ #include "std-includes.h"
+@@ -39,7 +39,7 @@
+  * 16 characters only if we need to. If Called_Address is not empty, then
+  * we use it to connect to the remote end, but put in Called_Name ...
+  * Called  Address can be a DNS based name, or a TCP/IP address ... */
+-static void *
++void *
+ RFCNB_Call(char *Called_Name, char *Calling_Name, char *Called_Address,
+            int port)
+ {
+@@ -151,7 +151,7 @@
+ /* We send a packet to the other end ... for the moment, we treat the 
+  * data as a series of pointers to blocks of data ... we should check the
+  * length ... */
+-static int 
++int 
+ RFCNB_Send(struct RFCNB_Con *Con_Handle, struct RFCNB_Pkt *udata, int Length)
+ {
+     struct RFCNB_Pkt *pkt;
+@@ -191,7 +191,7 @@
+ 
+ /* We pick up a message from the internet ... We have to worry about 
+  * non-message packets ...                                           */
+-static int 
++int 
+ RFCNB_Recv(void *con_Handle, struct RFCNB_Pkt *Data, int Length)
+ {
+     struct RFCNB_Pkt *pkt;
+@@ -228,7 +228,7 @@
+ 
+ /* We just disconnect from the other end, as there is nothing in the
+  * RFCNB protocol that specifies any exchange as far as I can see*/
+-static int 
++int 
+ RFCNB_Hangup(struct RFCNB_Con *con_Handle)
+ {
+     if (con_Handle != NULL) {
+diff -Naur smbval/smbdes.inc.c smbval.oden/smbdes.inc.c
+--- smbval/smbdes.inc.c	2003-06-05 21:56:21.000000000 +0200
++++ smbval.oden/smbdes.inc.c	2005-12-16 09:45:49.000000000 +0100
+@@ -311,7 +311,7 @@
+     }
+ }
+ 
+-static void 
++void 
+ E_P16(unsigned char *p14, unsigned char *p16)
+ {
+     unsigned char sp8[8] =
+@@ -320,7 +320,7 @@
+     smbhash(p16 + 8, sp8, p14 + 7);
+ }
+ 
+-static void 
++void 
+ E_P24(unsigned char *p21, unsigned char *c8, unsigned char *p24)
+ {
+     smbhash(p24, c8, p21);
+diff -Naur smbval/smbencrypt.inc.c smbval.oden/smbencrypt.inc.c
+--- smbval/smbencrypt.inc.c	2003-06-05 21:56:21.000000000 +0200
++++ smbval.oden/smbencrypt.inc.c	2005-12-16 09:47:10.000000000 +0100
+@@ -27,13 +27,13 @@
+ 
+ #include "byteorder.h"
+ 
+-static char *StrnCpy(char *dest, char *src, int n);
+-static void strupper(char *s);
++char *StrnCpy(char *dest, char *src, int n);
++void strupper(char *s);
+ 
+ /* 
+  * This implements the X/Open SMB password encryption It takes a password, 
+  * a 8 byte "crypt key" and puts 24 bytes of  encrypted password into p24 */
+-static void 
++void 
+ SMBencrypt(uchar * passwd, uchar * c8, uchar * p24)
+ {
+     uchar p14[15], p21[21];
+@@ -50,7 +50,7 @@
+ /****************************************************************************
+ line strncpy but always null terminates. Make sure there is room!
+ ****************************************************************************/
+-static char *
++char *
+ StrnCpy(char *dest, char *src, int n)
+ {
+     char *d = dest;
+@@ -65,7 +65,7 @@
+     return (dest);
+ }
+ 
+-static void 
++void 
+ strupper(char *s)
+ {
+     while (*s) {
+diff -Naur smbval/smblib.inc.c smbval.oden/smblib.inc.c
+--- smbval/smblib.inc.c	2004-02-19 16:22:09.000000000 +0100
++++ smbval.oden/smblib.inc.c	2005-12-16 09:54:24.000000000 +0100
+@@ -22,8 +22,8 @@
+ #include <stdio.h>
+ #include <malloc.h>
+ 
+-static int SMBlib_errno;
+-static int SMBlib_SMB_Error;
++int SMBlib_errno;
++int SMBlib_SMB_Error;
+ #define SMBLIB_ERRNO
+ #define uchar unsigned char
+ #include "smblib-priv.h"
+@@ -33,10 +33,10 @@
+ 
+ #include <signal.h>
+ 
+-static SMB_State_Types SMBlib_State;
++SMB_State_Types SMBlib_State;
+ 
+ /* Initialize the SMBlib package     */
+-static int 
++int 
+ SMB_Init()
+ {
+     SMBlib_State = SMB_State_Started;
+@@ -52,7 +52,7 @@
+ 
+ /* SMB_Connect_Server: Connect to a server, but don't negotiate protocol */
+ /* or anything else ...                                                  */
+-static SMB_Handle_Type 
++SMB_Handle_Type 
+ SMB_Connect_Server(SMB_Handle_Type Con_Handle,
+                    char *server, char *NTdomain)
+ {
+@@ -144,7 +144,7 @@
+ 
+ /* Logon to the server. That is, do a session setup if we can. We do
+  * not do Unicode yet! */
+-static int 
++int 
+ SMB_Logon_Server(SMB_Handle_Type Con_Handle, char *UserName,
+                  char *PassWord, int precrypted, char* domain)
+ {
+@@ -388,7 +388,7 @@
+ }
+ 
+ /* Disconnect from the server, and disconnect all tree connects */
+-static int 
++int 
+ SMB_Discon(SMB_Handle_Type Con_Handle, BOOL KeepHandle)
+ {
+ #ifdef LOG
+diff -Naur smbval/smblib-util.inc.c smbval.oden/smblib-util.inc.c
+--- smbval/smblib-util.inc.c	2003-06-05 21:56:24.000000000 +0200
++++ smbval.oden/smblib-util.inc.c	2005-12-16 09:48:33.000000000 +0100
+@@ -29,7 +29,7 @@
+  * strings.  We offered, and the index back from the server. We allow
+  * for a user supplied list, and assume that it is a subset of our
+  * list */
+-static int 
++int 
+ SMB_Figure_Protocol(char *dialects[], int prot_index)
+ {
+     int i;
+@@ -55,7 +55,7 @@
+ /* Negotiate the protocol we will use from the list passed in Prots we
+  * return the index of the accepted protocol in NegProt, -1 *indicates
+  * none acceptible, and our return value is 0 if ok, <0 if problems */
+-static int 
++int 
+ SMB_Negotiate(SMB_Handle_Type Con_Handle, char *Prots[])
+ {
+     struct RFCNB_Pkt *pkt;
+@@ -232,7 +232,7 @@
+ }
+ 
+ /* Get our hostname */
+-static void 
++void 
+ SMB_Get_My_Name(char *name, int len)
+ {
+     if (gethostname(name, len) < 0) {   /* Error getting name */
+diff -Naur smbval/valid.inc.c smbval.oden/valid.inc.c
+--- smbval/valid.inc.c	2004-02-19 16:22:35.000000000 +0100
++++ smbval.oden/valid.inc.c	2005-12-16 09:39:26.000000000 +0100
+@@ -6,9 +6,9 @@
+ #include "smblib-priv.h"
+ #include "valid.h"
+ 
+-static SMB_Handle_Type SMB_Connect_Server(SMB_Handle_Type, char *, char *);
++SMB_Handle_Type SMB_Connect_Server(SMB_Handle_Type, char *, char *);
+ 
+-static int 
++int 
+ Valid_User(char *USERNAME, char *PASSWORD, char *SERVER, char *BACKUP, char *DOMAIN)
+ {
+     char *SMB_Prots[] =
+@@ -49,7 +49,7 @@
+     return (NTV_NO_ERROR);
+ }
+ 
+-static void *
++void *
+ NTLM_Connect(char *SERVER, char *BACKUP, char *DOMAIN, char *nonce)
+ {
+     char *SMB_Prots[] =
+@@ -87,7 +87,7 @@
+     return con;
+ }
+ 
+-static int 
++int 
+ NTLM_Auth(void *handle, char *USERNAME, char *PASSWORD, int flag, char *DOMAIN)
+ {
+     SMB_Handle_Type con = handle;
+@@ -98,7 +98,7 @@
+     return NTV_NO_ERROR;
+ }
+ 
+-static void 
++void 
+ NTLM_Disconnect(void *handle)
+ {
+     SMB_Handle_Type con = handle;

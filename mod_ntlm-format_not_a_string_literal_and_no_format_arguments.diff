@@ -1,0 +1,20 @@
+--- mod_ntlm.c	2009-01-07 10:26:15.000000000 +0100
++++ mod_ntlm.c.oden	2009-01-07 10:30:17.000000000 +0100
+@@ -73,7 +73,7 @@ static void log(const request_rec * r, i
+     va_start(ap, format);
+     vsprintf(s + iLen, format, ap);
+     va_end(ap);
+-    ap_log_rerror(APLOG_MARK, level, 0, r, s);
++    ap_log_rerror(APLOG_MARK, level, 0, r, "%s", s);
+     free(s);
+ }
+ 
+@@ -90,7 +90,7 @@ static void slog(int level, const char *
+     va_start(ap, format);
+     vsprintf(s + iLen, format, ap);
+     va_end(ap);
+-    ap_log_error(APLOG_MARK, level, 0, pServer, s);
++    ap_log_error(APLOG_MARK, level, 0, pServer, "%s", s);
+     free(s);
+ }
+ 
