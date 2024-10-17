@@ -9,7 +9,7 @@ Version:	0.2
 Release:	%mkrel 13
 Group:		System/Servers
 License:	BSD
-URL:		http://modntlm.jamiekerwick.co.uk/
+URL:		https://modntlm.jamiekerwick.co.uk/
 Source0: 	http://modntlm.jamiekerwick.co.uk/ntlm2.tar.bz2
 Source1:	%{mod_conf}.bz2
 Source2:	README.html.bz2
